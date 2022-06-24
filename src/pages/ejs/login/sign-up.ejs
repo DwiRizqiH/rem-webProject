@@ -1,0 +1,101 @@
+<div class="card-body">
+    <form role="form" action="/api/register" method="post">
+        <input type="hidden" name="id" value="<%= idRegister %>">
+        <input type="hidden" name="idverif" value="<%= verifId %>">
+        <div class="mb-3">
+            <input type="text" name="username" class="form-control form-control-lg" placeholder="Name"
+                aria-label="Name">
+        </div>
+        <div class="mb-3">
+            <input name="user" class="form-control form-control-lg" placeholder="Phone Number or Email"
+                aria-label="Phone Number or Email">
+        </div>
+        <div class="mb-3">
+            <input type="password" name="pwd" class="form-control form-control-lg" placeholder="Password"
+                aria-label="Password">
+        </div>
+        <div class="mb-3">
+            <input type="text" name="wanumber" class="form-control form-control-lg" placeholder="WhatsApp Number"
+                aria-label="WhatsApp Number">
+        </div>
+        <div class="input-group mb-3">
+            <input type="text" name="wacode" class="form-control" placeholder="Verif Code" aria-label="Verif Code"
+                aria-describedby="button-verif-send" disabled>
+            <button class="btn btn-outline-primary mb-0" type="button" id="button-verif-send">Send</button>
+        </div>
+        <% if (isWrongCode) { %>
+            <%- include('../warning-badge', { style1: 'padding-top: 10px;', style2: 'color: #f80031; background-color: #fdd1da', textspan: 'Verif Code does not match!' }); %>
+        <% } %>
+        <% if (isRegistered) { %>
+            <%- include('../warning-badge', { style1: 'padding-top: 10px;', style2: 'color: #f80031; background-color: #fdd1da', textspan: 'Account already registered' }); %>
+        <% } %>
+        <div id="isError"></div>
+        <div class="text-center">
+            <button type="submit" class="btn btn-lg btn-primary btn-lg w-100 mt-4 mb-0" disabled>Sign Up</button>
+        </div>
+    </form>
+</div>
+<div class="card-footer text-center pt-0 px-lg-2 px-1">
+    <p class="mb-4 text-sm mx-auto">
+        Have an account?
+        <a href="/login" class="text-primary text-gradient font-weight-bold">Sign In</a>
+    </p>
+</div>
+<script src="../assets/js/core/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $("#button-verif-send").click(() => {
+            if($('input[name="wanumber"]').val() == '') {
+                const errHtmlEmpty = `<%- include('../warning-badge', { style1: 'padding-top: 10px;', style2: 'color: #f80031; background-color: #fdd1da', textspan: 'Please fill in your WhatsApp number' }); %>`
+                return document.getElementById('isError').innerHTML = errHtmlEmpty
+            }
+
+            $('input[name="wacode"]').removeAttr('disabled')
+
+            const xh = new XMLHttpRequest();
+            xh.open('POST', '/api/verif/wa', true)
+            xh.setRequestHeader('Content-type', 'application/json')
+            xh.send(JSON.stringify({
+                id: "<%= verifId %>"
+            }))
+            xh.onload = function () {
+                const response = JSON.parse(xh.responseText)
+                if (response.err) {
+                    const errHtml = `<%- include('../warning-badge', { style1: 'padding-top: 10px;', style2: 'color: #f80031; background-color: #fdd1da', textspan: 'Error sending verif, Refresh your page!' }); %>`
+                    document.getElementById('isError').innerHTML = errHtml
+                } else {
+                    const succHtml = `<%- include('../success-badge', { style1: "padding-top: 10px;", style2: "color: #1aae6f; background-color: #b0eed3;", textspan: "Success sending verif, Check your WhatsApp Messages" }) %>`
+                    document.getElementById('isError').innerHTML = succHtml
+                    $('#button-verif-send').attr('disabled', 'disabled');
+
+                    let ts = 30
+                    let interval = setInterval(() => {
+                        $('#button-verif-send').text(`${ts}s Send`)
+                        if(ts <= 0) {
+                            clearInterval(interval)
+                            $('#button-verif-send').text(`Send`)
+                            $('#button-verif-send').removeAttr('disabled')
+                        }
+                        ts -= 1
+                    }, 1000);
+                }
+            }
+        })
+
+        <% if (isVerifTimestamp) { %>
+            $('#button-verif-send').attr('disabled', 'disabled');
+            $('input[name="wacode"]').removeAttr('disabled')
+            const tlf = <%= isVerifTimestamp %> - Date.now()
+            let s = Math.floor((tlf % (1000 * 60)) / 1000);
+            let interval = setInterval(() => {
+                $('#button-verif-send').text(`${s}s Send`)
+                if(s <= 0) {
+                    clearInterval(interval)
+                    $('#button-verif-send').text(`Send`)
+                    $('#button-verif-send').removeAttr('disabled')
+                }
+                    s -= 1
+            }, 1000);
+        <% } %>
+    })
+</script>
