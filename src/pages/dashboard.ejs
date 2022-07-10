@@ -22,13 +22,13 @@
 <body class="g-sidenav-show   dark-version bg-gray-100">
   <div class="min-height-300 bg-primary position-absolute w-100"></div>
   <!-- SideBar -->
-  <%- include('./ejs/navbar-side') %> 
+  <%- include('./ejs/navbar-side', { isActive: navbarSide?.isActive }) %> 
   <main class="main-content position-relative border-radius-lg ">
     <!-- Navbar -->
-    <%- include('./ejs/navbar', { user, imgUser }) %> 
+    <%- include('./ejs/navbar', { user: navbar?.user, imgUser: navbar?.imgUser }) %> 
     <!-- End Navbar -->
     <div class="container-fluid py-4">
-      <%- include('./ejs/dashboard/row-head', { userMoney, userMoneyHaram, userXp, userLevel }); %> 
+      <%- include('./ejs/dashboard/row-head', { userMoney: rowHead?.userMoney, userMoneyHaram: rowHead?.userMoneyHaram, userXp: rowHead?.userXp, userLevel: rowHead?.userLevel }); %> 
       <div class="row mt-4">
         <div class="col-lg-7 mb-lg-0 mb-4">
           <div class="card z-index-2 h-100">
@@ -505,10 +505,8 @@
       Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
     }
   </script>
-  <!-- Github buttons -->
-  <script async defer src="https://buttons.github.io/buttons.js"></script>
   <!-- Control Center for Soft Dashboard: parallax effects, scripts for the example pages etc -->
-  <script src="../assets/js/argon-dashboard.min.js?v=2.0.3"></script>
+  <script src="../assets/js/argon-dashboard.min.js"></script>
 </body>
 
 </html>

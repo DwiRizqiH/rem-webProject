@@ -1,0 +1,21 @@
+          <div class="card">
+            <div class="card-header pb-0 px-3">
+              <h6 class="mb-0">Jadibot Client List</h6>
+            </div>
+            <div class="card-body pt-4 p-3">
+              <ul class="list-group">
+                <% for(let i = 0; i < listJadibotClient.length; i++ ) { %>
+                    <a class="list-group-item border-0 d-flex p-4 mb-2 bg-gray-100 border-radius-lg" href="/panel/jadibot/<%= listJadibotClient[i].virtualBotId %> ">
+                        <div class="d-flex flex-column">
+                          <h6 class="mb-3 text-sm"><%= listJadibotClient[i].virtualBotId %></h6>
+                          <span class="mb-2 text-xs">Number: <span class="text-dark font-weight-bold ms-sm-2"><%= listJadibotClient[i]?.access?.user?.jid %></span></span>
+                          <span class="mb-2 text-xs">Name: <span class="text-dark ms-sm-2 font-weight-bold"><%= listJadibotClient[i]?.access?.user?.name %></span></span>
+                        </div>
+                        <div class="ms-auto text-end">
+                            <span class="badge badge-pill bg-gradient-success">Online</span>
+                        </div>
+                    </a>
+                <% } %>
+              </ul>
+            </div>
+          </div>
