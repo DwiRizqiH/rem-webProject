@@ -1,3 +1,6 @@
+const { default: axios } = require('axios')
+const { baseBotAPI } = require('../options')
+
 module.exports = (router, listLoginId, listRegisterId, listSendVerifWa) => {
     // API
     router.post('/api/login', (req, res) => {
@@ -82,5 +85,18 @@ module.exports = (router, listLoginId, listRegisterId, listSendVerifWa) => {
     router.post('/api/v2/set/jadibot', (req, res) => {
         if(req?.session?.isLogin) return res.redirect('/dashboard')
         if(req.body.id == undefined) return res.status(400).send({ err: true, msg: 'missing id parameter' })
+        if(req.body.query == undefined) return res.status(400).send({ err: true, msg: 'missing query parameter' })
+        if(req.body.act == undefined) return res.status(400).send({ err: true, msg: 'missing act parameter' })
+
+        const getJadibotListId = { data: [{ virtualBotId: '1bi214b21', access: { user: { jid: '614861981', name: 'babi' } } }, { virtualBotId: '21ob4o1b41', access: { user: { jid: '9022155151', name: 'haaa' } } }] }
+    
+        const getPosJadibotId = getJadibotListId.data.find(all => all.virtualBotId == req.body.id)
+        if(getPosJadibotId == undefined) return res.status(401).send({ err: true, msg: '401!' })
+
+        const sendReqToBotAPI = Object.assign(req.body, { validateStatus: () => true })
+        const resultFromBotAPI = await axios.post(`${baseBotAPI}/api/jadibot`, sendReqToBotAPI)
+
+        if(resultFromBotAPI.data.err) return res.status(502).send({ err: true, msg: 'err in bot api, maybe still restarting', status: resultFromBotAPI.status })
+        return res.send({ err: false })
     })
 }
